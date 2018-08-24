@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>리엑트를 이용한 게임</title>
+<style>
+*{margin:0px;}
+#stage{
+	width:100%;
+	height:640px;
+	background-image:url(./images/bg.jpg);
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<script type="text/babel">
+var bgX=0;
+var hero;
+var velX=0
+var velY=0;
+
+class GameObject extends React.Component{
+	constructor(props){
+		super(props);
+		this.src=props.src;
+		this.x=parseInt(props.x);
+		this.y=parseInt(props.y);
+		this.width=parseInt(props.width);
+		this.height=parseInt(props.height);
+		this.velX=parseInt(props.velX);
+		this.velY=parseInt(props.velY);
+
+	}
+
+	render(){
+
+		this.css={
+			position:"absolute",
+			left:this.x+"px",
+			top:this.y+"px",
+			width:this.width+"px",
+			height:this.height+"px"
+		}
+		
+		return (
+			<img src={this.src} style={this.css} />
+		);
+	}
+}
+
+class Hero extends GameObject{
+	constructor(props){
+		super(props);
+	}
+	render(){
+		this.x+=velX;
+		this.y+=velY;
+
+		return super.render();
+	}
+}
+
+
+$(function(){
+	bgEffect();
+	
+	gameLoop();
+
+	$(document.body).on("keydown", function(e){
+		control(e);
+	});
+	$(document.body).on("keyup", function(e){
+		control2(e);
+	});
+
+});
+
+function bgEffect(){
+	bgX-=2;
+
+	$("#stage").css({
+		backgroundPosition:bgX+"px 0px"
+	});
+}
+
+function getHero(){
+	hero=<Hero src="./images/plane.png" x="100" y="200" width="100" height="65"/>;
+	console.log(hero.props.x);
+	return hero;
+}
+
+function control(e){
+	switch(e.keyCode){
+		case 37:velX=-5;break;
+		case 39:velX=5;break;
+		case 38:velY=-5;break;
+		case 40:velY=5;break;
+	}
+}
+
+function control2(e){
+	switch(e.keyCode){
+		case 37:velX=0;break;
+		case 39:velX=0;break;
+		case 38:velY=0;break;
+		case 40:velY=0;break;
+	}
+}
+
+function gameLoop(){
+	bgEffect();
+	
+	ReactDOM.render(getHero() , document.getElementById("stage"));
+
+	setTimeout("gameLoop()",10);
+}
+</script>
+</head>
+<body>
+	<div id="stage"></div>	
+</body>
+</html>
+
